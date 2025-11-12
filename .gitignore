@@ -1,0 +1,19 @@
+# Dependências do Node.js (MUITO IMPORTANTE)
+# Isso ignora a pasta 'node_modules' dentro do 'backend'
+backend/node_modules/
+
+# Arquivos de ambiente (senhas, chaves de API, segredos)
+# NUNCA envie este arquivo para o Git
+.env
+
+# Arquivos de configuração do VS Code
+.vscode/
+*.code-workspace
+
+# Logs de erro ou debug
+*.log
+npm-debug.log*
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
