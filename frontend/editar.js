@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Variável global para armazenar o ID ao longo do processo de edição
+    // Armazena o ID do produto sendo editado
     let idProdutoSendoEditado = parseInt(produtoId);
 
     // 2. Função para carregar os dados do produto existente
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('descricao').value = produto.descricao;
             document.getElementById('imagem').value = produto.imagem;
 
-            // Ajustar o link "Voltar" para levar à página de detalhes
+            // Ajusta o link "Voltar" para levar à página de detalhes
             btnVoltar.href = `detalhe.html?id=${idProdutoSendoEditado}`;
 
         } catch (error) {
@@ -43,23 +43,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Chamada inicial para carregar o produto
     carregarProduto();
 
-    // 3. Listener para o envio do formulário de EDIÇÃO
+    // 3. Listener para o envio do formulário de EDIÇÃO (PUT/PATCH)
     formEdicao.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        // Coletar os novos dados
+        // Coleta os novos dados
         const produtoAtualizado = {
-            id: idProdutoSendoEditado, // Garante que o ID é enviado
+            id: idProdutoSendoEditado,
             nome: document.getElementById('nome').value.trim(),
             preco: parseFloat(document.getElementById('preco').value),
             descricao: document.getElementById('descricao').value.trim(),
             imagem: document.getElementById('imagem').value.trim()
         };
 
-        // Validação (Simples)
+        // Validação
         if (!produtoAtualizado.nome || isNaN(produtoAtualizado.preco) || produtoAtualizado.preco <= 0) {
             mensagemElement.innerHTML = `<p style="color: red;">Preencha Nome e Preço (deve ser maior que zero).</p>`;
             return;
@@ -82,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Sucesso
             mensagemElement.innerHTML = `<p style="color: green;">Produto atualizado com sucesso!</p>`;
             
-            // Opcional: Redirecionar para a página de detalhes após 8 segundos
+            // Redireciona para a página de detalhes após 8 segundos
             setTimeout(() => {
                 window.location.href = `detalhe.html?id=${idProdutoSendoEditado}`;
             }, 8000);

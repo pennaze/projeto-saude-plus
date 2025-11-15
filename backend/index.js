@@ -1,13 +1,13 @@
-// --- 1. Importações ---
+// --- Importações ---
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg'); 
 
-// --- 2. Configuração Inicial ---
+// --- Configuração Inicial ---
 const app = express();
 const PORT = 3000;
 
-// --- Configuração do Banco de Dados ---
+// Configuração do Banco de Dados PostgreSQL
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
@@ -16,15 +16,15 @@ const pool = new Pool({
     port: 5432,
 });
 
-// --- 3. Middlewares (Funções Globais) ---
-app.use(express.json());
-app.use(cors());
+// --- Middlewares ---
+app.use(express.json()); // Permite ler JSON no corpo da requisição
+app.use(cors()); // Habilita o CORS para requisições de diferentes origens
 
 // ========================================================================
-// --- 4. ROTAS DE SERVIÇOS (/servicos) ---
+// --- ROTAS DE SERVIÇOS (/servicos) ---
 // ========================================================================
-// (As suas rotas de GET, POST, PATCH, DELETE de /servicos permanecem aqui, inalteradas)
-// Rota para todos os serviços (GET /servicos)
+
+// Rota para todos os serviços (GET /servicos) - Inclui funcionalidade de busca e ordenação.
 app.get('/servicos', async (req, res) => {
     const { search, sort } = req.query;
     try {
@@ -63,12 +63,10 @@ app.get('/servicos/:id', async (req, res) => {
 // Rota de Cadastro de Serviço (POST /servicos)
 app.post('/servicos', async (req, res) => {
     const { nome, profissional, especialidade, preco, descricao, imagem } = req.body;
-    console.log('✅ Recebida requisição POST para /servicos');
     try {
         const sql = 'INSERT INTO servicos (nome, profissional, especialidade, preco, descricao, imagem) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
         const values = [nome, profissional, especialidade, preco, descricao, imagem];
         const { rows } = await pool.query(sql, values);
-        console.log(`💾 Serviço ID ${rows[0].id} gravado com sucesso no DB.`);
         res.status(201).json(rows[0]);
     } catch (error) {
         console.error("Erro no processamento da requisição POST:", error.message);
@@ -80,7 +78,6 @@ app.post('/servicos', async (req, res) => {
 app.patch('/servicos/:id', async (req, res) => {
     const { id } = req.params;
     const { nome, profissional, especialidade, preco, descricao, imagem } = req.body;
-    console.log(`✏️ Recebida requisição PATCH para /servicos/${id}`);
     try {
         const sql = 'UPDATE servicos SET nome = $1, profissional = $2, especialidade = $3, preco = $4, descricao = $5, imagem = $6 WHERE id = $7 RETURNING *';
         const values = [nome, profissional, especialidade, preco, descricao, imagem, id];
@@ -88,7 +85,6 @@ app.patch('/servicos/:id', async (req, res) => {
         if (rowCount === 0) {
             return res.status(404).json({ mensagem: 'Serviço não encontrado para edição.' });
         }
-        console.log(`💾 Serviço ID ${id} atualizado com sucesso no DB.`);
         return res.status(200).json(rows[0]);
     } catch (error) {
         console.error("Erro ao processar edição:", error);
@@ -99,13 +95,11 @@ app.patch('/servicos/:id', async (req, res) => {
 // Rota de Exclusão de Serviço (DELETE /servicos/:id)
 app.delete('/servicos/:id', async (req, res) => {
     const { id } = req.params;
-    console.log(`❌ Recebida requisição DELETE para /servicos/${id}`);
     try {
         const { rowCount } = await pool.query('DELETE FROM servicos WHERE id = $1', [id]);
         if (rowCount === 0) {
             return res.status(404).json({ mensagem: 'Serviço não encontrado para exclusão.' });
         }
-        console.log(`✅ Serviço ID ${id} excluído com sucesso do DB.`);
         return res.status(200).json({ mensagem: 'Serviço excluído com sucesso.' });
     } catch (error) {
         console.error("Erro ao processar exclusão:", error);
@@ -115,9 +109,10 @@ app.delete('/servicos/:id', async (req, res) => {
 
 
 // ========================================================================
-// --- 5. ROTAS DE USUÁRIOS (/usuarios) ---
+// --- ROTAS DE USUÁRIOS (/usuarios) ---
 // ========================================================================
-// (Rota GET /usuarios inalterada)
+
+// Rota para buscar usuários (GET /usuarios) - Usada para login e verificação de email.
 app.get('/usuarios', async (req, res) => {
     const { email, senha } = req.query;
     try {
@@ -132,7 +127,6 @@ app.get('/usuarios', async (req, res) => {
             sql += ` AND senha = $${params.length}`;
         }
         const { rows } = await pool.query(sql, params);
-        console.log(`🔍 GET /usuarios?email=${email} - Encontrados: ${rows.length}`);
         res.json(rows); 
     } catch (error) {
         console.error("Erro ao buscar usuários:", error);
@@ -140,24 +134,16 @@ app.get('/usuarios', async (req, res) => {
     }
 });
 
-// (NOVO) Rota POST /usuarios ATUALIZADA
+// Rota de Cadastro de Usuário (POST /usuarios) - Define o nível como 'gerente' se for o email mestre.
 app.post('/usuarios', async (req, res) => {
-    // 1. MUDANÇA: 'nivel' não é mais recebido do frontend
     const { email, senha } = req.body;
-    console.log('✅ Recebida requisição POST para /usuarios (Cadastro)');
     
-    // 2. MUDANÇA: Validação agora é só para email e senha
     if (!email || !senha) {
         return res.status(400).json({ error: 'Email e senha são obrigatórios.' });
     }
 
-    // 3. (NOVA LÓGICA) Define o nível automaticamente
-    // Por padrão, todos são clientes
+    // Lógica para definir o nível: "admin@saudeplus.com" se torna gerente, outros clientes.
     let nivel = 'cliente';
-    
-    // *** AQUI ESTÁ A SUA IDEIA: O "EMAIL MESTRE" ***
-    // Se o email for este, ele se torna gerente.
-    // (Você pode mudar este email para o que quiser)
     if (email.toLowerCase() === 'admin@saudeplus.com') {
         nivel = 'gerente';
     }
@@ -169,14 +155,11 @@ app.post('/usuarios', async (req, res) => {
             return res.status(400).json({ error: 'Este email já está cadastrado.' });
         }
         
-        // 4. MUDANÇA: Insere o usuário com o 'nivel' que definimos acima
+        // Insere o novo usuário
         const sql = 'INSERT INTO usuarios (email, senha, nivel) VALUES ($1, $2, $3) RETURNING *';
         const { rows } = await pool.query(sql, [email, senha, nivel]);
         
-        const novoUsuario = rows[0];
-        // Log atualizado para mostrar o nível
-        console.log(`💾 Usuário ID ${novoUsuario.id} (email: ${novoUsuario.email}) gravado com sucesso como [${nivel}].`);
-        res.status(201).json(novoUsuario);
+        res.status(201).json(rows[0]);
 
     } catch (error) {
         console.error("Erro no processamento do POST /usuarios:", error.message);
@@ -186,16 +169,12 @@ app.post('/usuarios', async (req, res) => {
 
 
 // ========================================================================
-// --- 6. ROTAS DE AGENDAMENTOS (/agendamentos) ---
+// --- ROTAS DE AGENDAMENTOS (/agendamentos) ---
 // ========================================================================
-// (As rotas de agendamentos permanecem 100% inalteradas)
 
-/**
- * Rota para CRIAR um agendamento
- */
+// Rota para CRIAR um agendamento (POST /agendamentos)
 app.post('/agendamentos', async (req, res) => {
     const { usuario_id, servico_id, data_agendamento } = req.body;
-    console.log(`🗓️  Recebida requisição POST para /agendamentos`);
 
     if (!usuario_id || !servico_id || !data_agendamento) {
         return res.status(400).json({ mensagem: 'Dados incompletos para o agendamento.' });
@@ -205,7 +184,6 @@ app.post('/agendamentos', async (req, res) => {
         const sql = 'INSERT INTO agendamentos (usuario_id, servico_id, data_agendamento, status) VALUES ($1, $2, $3, $4) RETURNING *';
         const { rows } = await pool.query(sql, [usuario_id, servico_id, data_agendamento, 'Agendado']);
         
-        console.log(`✅ Agendamento ID ${rows[0].id} criado com sucesso.`);
         res.status(201).json(rows[0]);
 
     } catch (error) {
@@ -214,14 +192,12 @@ app.post('/agendamentos', async (req, res) => {
     }
 });
 
-/**
- * Rota para LISTAR agendamentos de UM usuário
- */
+// Rota para LISTAR agendamentos de UM usuário (GET /agendamentos/usuario/:id)
 app.get('/agendamentos/usuario/:id', async (req, res) => {
     const { id } = req.params;
-    console.log(`🗓️  Recebida requisição GET para /agendamentos/usuario/${id}`);
 
     try {
+        // JOIN com a tabela 'servicos' para obter informações detalhadas do serviço
         const sql = `
             SELECT 
                 a.id AS agendamento_id, 
@@ -245,14 +221,10 @@ app.get('/agendamentos/usuario/:id', async (req, res) => {
     }
 });
 
-/**
- * Rota para ATUALIZAR O STATUS de um agendamento (Cancelar)
- */
+// Rota para ATUALIZAR O STATUS de um agendamento (PATCH /agendamentos/:id/status)
 app.patch('/agendamentos/:id/status', async (req, res) => {
     const { id } = req.params;
     const { status } = req.body; // Espera receber {"status": "Cancelado"}
-
-    console.log(`🗓️  Recebida requisição PATCH para /agendamentos/${id}/status`);
 
     if (!status) {
         return res.status(400).json({ mensagem: 'Novo status é obrigatório.' });
@@ -266,7 +238,6 @@ app.patch('/agendamentos/:id/status', async (req, res) => {
             return res.status(404).json({ mensagem: 'Agendamento não encontrado.' });
         }
 
-        console.log(`✅ Agendamento ID ${id} atualizado para ${status}.`);
         res.status(200).json(rows[0]);
 
     } catch (error) {
@@ -276,11 +247,10 @@ app.patch('/agendamentos/:id/status', async (req, res) => {
 });
 
 
-// --- 7. INICIA O SERVIDOR ---
+// --- INICIA O SERVIDOR ---
 app.listen(PORT, () => {
     console.log('========================================================');
     console.log(`✅ Servidor Express do Marketplace de Saúde a rodar.`);
-    console.log(`Conectado ao banco de dados PostgreSQL.`);
     console.log(`✅ Servidor pronto para receber requisições em http://localhost:${PORT}`);
     console.log('========================================================');
 });

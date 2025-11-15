@@ -1,109 +1,97 @@
-# Projeto Final: Marketplace de Serviços de Saúde (Saúde+)
+# 🏥 Saúde+ | Marketplace de Serviços de Saúde
 
-[cite_start]Este projeto é um sistema full-stack de "Marketplace de Serviços" [cite: 6] [cite_start]desenvolvido para as disciplinas de Desenvolvimento Front-end e Back-end do curso de ADS (2025.2)[cite: 1, 3, 4].
+## Descrição do Projeto
+Saúde+ é um marketplace focado em conectar clientes a diversos serviços de saúde e bem-estar. A aplicação utiliza uma arquitetura **Full-Stack JavaScript**, com um backend **Node.js/Express** e persistência de dados em **PostgreSQL**, e um frontend moderno baseado em **HTML, CSS e JavaScript puro** com o auxílio do **Bootstrap 5**.
 
-[cite_start]O sistema consiste em um **backend** (API RESTful) construído com Node.js e Express.js [cite: 32] [cite_start]que gerencia os dados, e um **frontend** (Single Page Application) que consome essa API[cite: 40].
+O projeto incorpora um sistema robusto de autenticação e controle de acesso, permitindo a separação de funcionalidades entre clientes e gerentes.
 
-## 1. Estrutura do Backend e Endpoints
+## 🌟 Funcionalidades Principais
 
-[cite_start]O servidor, construído com **Express.js**, se conecta a um banco de dados **PostgreSQL** [cite: 32, 33] e expõe as seguintes rotas:
+As funcionalidades são segmentadas por nível de acesso, garantindo uma experiência de usuário segura e eficiente.
 
-### [cite_start]Rotas de Serviços (CRUD) [cite: 36]
-* `GET /servicos`: Lista todos os serviços cadastrados.
-* `GET /servicos/:id`: Busca um serviço específico pelo seu ID.
-* `POST /servicos`: Cadastra um novo serviço (Rota protegida, requer nível 'gerente').
-* `PATCH /servicos/:id`: Atualiza um serviço existente (Rota protegida, requer nível 'gerente').
-* `DELETE /servicos/:id`: Exclui um serviço (Rota protegida, requer nível 'gerente').
+### Autenticação e Autorização (RBAC)
+* **Login e Cadastro de Usuários:** Sistema completo para gerenciamento de contas.
+* **Controle de Acesso por Perfil:**
+    * **Gerente (`gerente`):** Possui acesso total ao CRUD (Criação, Leitura, Edição e Exclusão) de serviços.
+    * **Cliente (`cliente`):** Pode visualizar serviços, realizar agendamentos e gerenciar suas consultas.
+* **Acesso de Gerente Simplificado:** O usuário cadastrado com o email `admin@saudeplus.com` é automaticamente promovido ao nível de Gerente pelo backend.
 
-### [cite_start]Rotas de Usuários (Autenticação e Cadastro) [cite: 37]
-* `GET /usuarios`: Usada para o login, buscando um usuário por email e senha.
-* `POST /usuarios`: Cadastra um novo usuário.
-    * **Lógica de Nível:** O sistema automaticamente cadastra o email `admin@saudeplus.com` como `'gerente'`. Todos os outros emails são cadastrados como `'cliente'`.
+### Gestão de Serviços (CRUD)
+* **Listagem Completa:** Exibição de todos os serviços em destaque (carrossel) e na página de catálogo.
+* **Filtro Dinâmico:** Pesquisa instantânea por nome, profissional ou especialidade na página de serviços.
+* **Administração Exclusiva:** Ações de **Cadastro**, **Edição** e **Exclusão** de serviços estão disponíveis apenas para o perfil `gerente`.
 
-### Rotas de Agendamentos
-* `GET /agendamentos/usuario/:id`: Lista todos os agendamentos de um usuário específico (juntando dados do serviço).
-* `POST /agendamentos`: Cria um novo agendamento para um cliente.
-* `PATCH /agendamentos/:id/status`: Atualiza o status de um agendamento (usado para cancelar).
+### Funcionalidades do Cliente (Agendamentos)
+* **Agendamento de Consultas:** Clientes logados podem escolher a data e hora na página de detalhes do serviço.
+* **Painel "Meus Agendamentos":** Área privada onde o cliente pode visualizar um histórico de suas consultas agendadas.
+* **Cancelamento de Agendamentos:** Opção de atualizar o status da consulta para "Cancelado" diretamente do painel do cliente.
 
-## 2. Tecnologias Utilizadas
+### Design e Estilização
+* **Dark Mode Seletivo:** O frontend utiliza um tema escuro confortável, conforme definido no `style.css`.
+* **Notícias de Saúde:** Integração de API externa (`newsdata.io`) para exibir notícias relevantes na página inicial.
 
-* **Backend:**
-    * Node.js
-    * [cite_start]Express.js [cite: 32]
-    * [cite_start]PostgreSQL (pg) [cite: 33]
-    * CORS
-* **Dependências Principais:** `express`, `cors`, `pg`
-* **Frontend:**
-    * HTML5
-    * CSS3 (Dark Mode com Variáveis CSS)
-    * JavaScript (ES6+)
-    * Bootstrap
-    * Swiper.js (para o carrossel)
+## 🛠️ Tecnologias Utilizadas
 
-## 3. Como Executar o Projeto
+**Backend** (`marketplace/backend`)
+* **Node.js & Express:** Servidor RESTful.
+* **PostgreSQL (via `pg`):** Banco de dados.
+* **CORS:** Middleware para comunicação segura.
 
-Para rodar este projeto, você precisará de **Node.js** e **PostgreSQL** (com o **pgAdmin**) instalados em sua máquina.
+**Frontend** (`marketplace/frontend`)
+* **HTML5, CSS3, JavaScript (ES6+):** Base da aplicação.
+* **Bootstrap 5:** Framework CSS para responsividade.
+* **Swiper.js:** Biblioteca para o carrossel de destaque.
 
-### Passo 1: Configurar o Banco de Dados (PostgreSQL)
+## ⚙️ Configuração do Ambiente
 
-1.  Abra o **pgAdmin**.
-2.  Crie um novo banco de dados. O nome utilizado no código é `saudeplus`.
-3.  Abra o "Query Tool" (Ferramenta de Consulta) para este banco e execute os seguintes comandos SQL para criar as tabelas:
+### Pré-requisitos
+* Node.js (LTS recomendado)
+* PostgreSQL (Servidor rodando)
 
-    ```sql
-    -- Tabela 1: Usuários
-    -- Armazena clientes e gerentes
-    CREATE TABLE usuarios (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(100) UNIQUE NOT NULL,
-        senha VARCHAR(100) NOT NULL,
-        nivel VARCHAR(20) NOT NULL DEFAULT 'cliente' -- 'cliente' ou 'gerente'
-    );
-    
-    -- Tabela 2: Serviços
-    -- O catálogo principal de serviços oferecidos
-    CREATE TABLE servicos (
-        id SERIAL PRIMARY KEY,
-        nome VARCHAR(100) NOT NULL,
-        profissional VARCHAR(100),
-        especialidade VARCHAR(100),
-        preco NUMERIC(10, 2) NOT NULL,
-        descricao TEXT,
-        imagem VARCHAR(255)
-    );
-    
-    -- Tabela 3: Agendamentos
-    -- Conecta um usuário a um serviço em uma data específica
-    CREATE TABLE agendamentos (
-        id SERIAL PRIMARY KEY,
-        usuario_id INTEGER NOT NULL,
-        servico_id INTEGER NOT NULL,
-        data_agendamento TIMESTAMPTZ NOT NULL,
-        status VARCHAR(50) DEFAULT 'Agendado', -- Ex: 'Agendado', 'Cancelado'
-        
-        -- Chaves estrangeiras para garantir a integridade dos dados
-        FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-        FOREIGN KEY (servico_id) REFERENCES servicos(id)
-    );
+### 1. Configuração do Banco de Dados
+
+1.  Crie um banco de dados chamado `saudeplus` no PostgreSQL.
+2.  **Ajuste de Credenciais:** Edite o arquivo `marketplace/backend/index.js` para garantir que as credenciais do seu banco de dados estejam corretas. Por padrão, ele usa:
+    ```javascript
+    // ...
+    const pool = new Pool({
+        user: 'postgres',
+        host: 'localhost',
+        database: 'saudeplus', 
+        password: '', // <-- Adicione sua senha
+        port: 5432,
+    });
+    // ...
+    ```
+3.  **Criação de Tabelas:** Execute os comandos SQL necessários para criar as tabelas `usuarios`, `servicos` e `agendamentos` no seu banco de dados `saudeplus`.
+
+### 2. Executando o Backend
+
+1.  Abra o terminal no diretório `marketplace/backend`.
+2.  Instale as dependências do Node.js:
+    ```bash
+    npm install express pg cors
+    ```
+    *(Ou simplesmente `npm install` se tiver o `package.json` completo).*
+3.  Inicie o servidor:
+    ```bash
+    node index.js
+    # O servidor estará ativo em: http://localhost:3000
     ```
 
-### Passo 2: Configurar e Rodar o Backend
+### 3. Executando o Frontend
 
-1.  Navegue até a pasta do backend: `cd marketplace/backend`
-2.  Instale as dependências: `npm install`
-3.  **IMPORTANTE:** Abra o arquivo `index.js`. Na `const pool`, **altere a senha (`password: '1234'`)** para a senha que *você* usa no seu PostgreSQL.
-4.  Inicie o servidor: `node index.js`
-5.  O terminal deve mostrar: `✅ Servidor pronto para receber requisições em http://localhost:3000`
+1.  Navegue até o diretório `marketplace/frontend`.
+2.  O Frontend é estático: simplesmente abra o arquivo `index.html` diretamente no seu navegador.
+    *(Ex: `file:///caminho/para/marketplace/frontend/index.html`)*
 
-### Passo 3: Rodar o Frontend
+## 🔑 Acessos de Teste
 
-1.  Abra a pasta `marketplace/frontend` no VS Code.
-2.  Clique com o botão direito no arquivo `index.html`.
-3.  Selecione "Open with Live Server" (ou use qualquer servidor estático de sua preferência).
-4.  O site será aberto no seu navegador (geralmente em `http://127.0.0.1:5500/frontend/index.html`).
+Para testar as diferentes permissões do sistema (RBAC):
 
-## 4. Autores
+| Perfil | Email | Nível | Ações |
+| :--- | :--- | :--- | :--- |
+| **Gerente** | `admin@saudeplus.com` | `gerente` | Acesso total a Serviços (CRUD). |
+| **Cliente** | `qualquer@email.com` | `cliente` | Agendar serviços, Cancelar agendamentos, Ver lista. |
 
-* (Enzo Rodrigues)
-* (Gabriel Roberto)
-* (José Peninha)
+***Lembre-se:*** Para criar a conta de Gerente, utilize o email `admin@saudeplus.com` no formulário de cadastro de usuário (`usuario.html`).

@@ -1,32 +1,21 @@
-/**
- * Este script é executado em todas as páginas do site.
- */
 document.addEventListener("DOMContentLoaded", () => {
     
     // ========================================================================
-    // BLOCO 1: DEFINIÇÃO DE FUNÇÕES AUXILIARES (Helpers)
+    // Funções Auxiliares (Helpers)
     // ========================================================================
 
-    // --- 1.1: Funções de Autenticação e Sessão ---
-
-    /**
-     * BLOCO 1.1.1: Busca dados do usuário no localStorage.
-     * (ATUALIZADO para incluir o ID)
-     */
+    // Busca dados do usuário (id, email, nivel) no localStorage.
     const getUserData = () => {
         const userData = localStorage.getItem('currentUser');
         if (userData) {
             try {
                 const parsedData = JSON.parse(userData);
-                // Validação para garantir que o ID está presente (crucial para agendamentos)
                 if (!parsedData.id) {
-                    console.warn('Usuário no localStorage sem ID. A fazer logout.');
                     localStorage.removeItem('currentUser');
                     return null;
                 }
-                return parsedData; // Retorna { id, email, nivel }
+                return parsedData;
             } catch (e) {
-                console.error("Erro ao parsear dados do usuário:", e);
                 localStorage.removeItem('currentUser');
                 return null;
             }
@@ -34,19 +23,13 @@ document.addEventListener("DOMContentLoaded", () => {
         return null; 
     };
 
-    /**
-     * BLOCO 1.1.2: Realiza o logout.
-     */
+    // Realiza o logout do usuário.
     const logout = () => {
         localStorage.removeItem('currentUser');
         window.location.href = 'index.html'; 
     };
 
-    // --- 1.2: Funções de Renderização de UI (Interface) ---
-
-    /**
-     * BLOCO 1.2.1: Renderiza a barra de navegação (ATUALIZADO para Agendamentos)
-     */
+    // Renderiza a barra de navegação dinamicamente (baseado no nível do usuário).
     const renderizarNavbar = () => {
         const navbarContainer = document.getElementById('navbar-container');
         if (!navbarContainer) return;
@@ -56,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let navLinks = '';
         let authButtons = '';
 
-        // Links visíveis para TODOS
+        // Links para todos
         navLinks += `
             <li class="nav-item">
                 <a class="nav-link" href="index.html">Início</a>
@@ -67,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         if (user) {
-            // --- Usuário LOGADO ---
+            // Links para Gerente
             if (user.nivel === 'gerente') {
                 navLinks += `
                     <li class="nav-item">
@@ -75,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </li>
                 `;
             }
-            // (NOVO) Link do Painel para Clientes
+            // Link para Cliente
             if (user.nivel === 'cliente') {
                 navLinks += `
                     <li class="nav-item">
@@ -84,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
             }
             
+            // Botões de usuário logado
             authButtons = `
                 <li class="nav-item me-2">
                     <span class="navbar-text user-info">
@@ -95,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </li>
             `;
         } else {
-            // --- Usuário DESLOGADO ---
+            // Botões de usuário deslogado
             authButtons = `
                 <li class="nav-item me-2">
                     <a class="nav-link" href="usuario.html">Cadastre-se</a>
@@ -131,15 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.style.paddingTop = navbarContainer.offsetHeight + 'px';
     };
 
-    /**
-     * BLOCO 1.2.2: Exibe um modal de confirmação customizado.
-     * (ATUALIZADO para ser mais genérico)
-     */
+    // Exibe um modal de confirmação customizado para ações destrutivas.
     const showCustomConfirmModal = (titulo, mensagem, onConfirm) => {
         const existingModal = document.querySelector('.modal-overlay');
-        if (existingModal) {
-            existingModal.remove();
-        }
+        if (existingModal) { existingModal.remove(); }
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         overlay.innerHTML = `
@@ -173,9 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    /**
-     * BLOCO 1.2.3: Função de exclusão de SERVIÇO.
-     */
+    // Função de exclusão de SERVIÇO, invocada pelo modal de confirmação.
     const excluirServico = (id) => {
         const executarExclusao = () => {
             fetch(`http://localhost:3000/servicos/${id}`, { 
@@ -185,7 +162,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!res.ok) {
                     throw new Error('Erro ao tentar excluir o serviço no servidor.');
                 }
-                return; 
             })
             .then(() => {
                 const detalheElement = document.getElementById("servico-detalhe");
@@ -206,11 +182,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         <a href="index.html" class="btn-voltar error">← Voltar</a>
                     </div>
                 `;
-                console.error("Erro na exclusão:", error);
             });
         };
         
-        // (ATUALIZADO) Chama o modal genérico
         showCustomConfirmModal(
             'Confirmar Exclusão',
             `Tem certeza que deseja excluir o serviço com ID ${id}? Esta ação não pode ser desfeita.`,
@@ -218,9 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     };
 
-    /**
-     * (NOVO) BLOCO 1.2.4: Função de CANCELAR AGENDAMENTO.
-     */
+    // Função para CANCELAR AGENDAMENTO, invocada pelo modal de confirmação.
     const cancelarAgendamento = (id) => {
         const executarCancelamento = () => {
             fetch(`http://localhost:3000/agendamentos/${id}/status`, { 
@@ -232,15 +204,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!res.ok) {
                     throw new Error('Erro ao tentar cancelar o agendamento.');
                 }
-                return res.json(); 
             })
             .then(() => {
-                // A forma mais fácil e segura de atualizar a UI é recarregar a página.
+                // Recarrega a página para atualizar a lista
                 location.reload();
             })
             .catch(error => {
-                console.error("Erro no cancelamento:", error);
-                alert(error.message); // Exibe um alerta simples em caso de falha
+                alert(error.message);
             });
         };
         
@@ -252,16 +222,11 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 
-    /**
-     * BLOCO 1.2.5: API DE NOTÍCIAS (Tema: Saúde)
-     */
+    // Busca notícias de saúde de uma API externa (newsdata.io).
     const fetchHealthNews = () => {
-        // ... (Esta função permanece 100% igual)
-        console.log("Buscando notícias de saúde (API Real)...");
         const apiKey = "pub_7b4435a95203465abb2c15d4c9db15bd"; 
         const apiUrl = `https://newsdata.io/api/1/latest?apikey=${apiKey}&q=health%20OR%20saude&language=pt`; 
         if (apiKey === "YOUR_API_KEY") {
-            console.error("ERRO: A chave da API de notícias não foi definida.");
             return Promise.reject(new Error("A chave da API (API Key) não foi definida no script.js."));
         }
         return fetch(apiUrl)
@@ -288,15 +253,14 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // ========================================================================
-    // BLOCO 2: EXECUÇÃO PRINCIPAL (ROTEADOR DE PÁGINA)
+    // Lógica Específica por Página
     // ========================================================================
 
     const path = window.location.pathname; 
     const currentUser = getUserData(); 
     renderizarNavbar(); 
 
-    // --- 2.2: Lógica Específica da Página de LOGIN (login.html) ---
-    // (ATUALIZADO para guardar o ID do usuário)
+    // Lógica da Página de LOGIN (login.html)
     if (path.includes("login.html")) {
         const formLogin = document.getElementById('form-login');
         const messageContainer = document.getElementById('message-container');
@@ -312,17 +276,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (data.length > 0) {
                         const user = data[0]; 
                         
-                        // *** CORREÇÃO CRÍTICA: Guardar o ID ***
+                        // Armazena ID, email e nível do usuário logado no localStorage
                         localStorage.setItem('currentUser', JSON.stringify({
-                            id: user.id, // <-- ADICIONADO
+                            id: user.id,
                             email: user.email,
                             nivel: user.nivel
                         }));
                         
-                        // *** (NOVO) MENSAGEM DE SUCESSO ***
                         messageContainer.textContent = 'Login bem-sucedido! Redirecionando...';
-                        messageContainer.className = 'success'; // Usa a classe do CSS
-                        messageContainer.style.display = 'block'; // Garante que está visível
+                        messageContainer.className = 'success';
+                        messageContainer.style.display = 'block';
                         
                         setTimeout(() => { window.location.href = 'index.html'; }, 1500);
                     } else {
@@ -330,20 +293,16 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 })
                 .catch(err => {
-                    // *** (NOVO) MENSAGEM DE ERRO ***
                     messageContainer.textContent = err.message;
-                    messageContainer.className = 'error'; // Usa a classe do CSS
-                    messageContainer.style.display = 'block'; // Garante que está visível
+                    messageContainer.className = 'error';
+                    messageContainer.style.display = 'block';
                 });
             });
         }
     }
 
-    // --- 2.3: Lógica Específica da Página de CADASTRO DE USUÁRIO (usuario.html) ---
+    // Lógica da Página de CADASTRO DE USUÁRIO (usuario.html)
     else if (path.includes("usuario.html")) {
-        //
-        // *** (NOVO) LÓGICA DE CADASTRO DE CLIENTE ***
-        //
         const formCadastroUsuario = document.getElementById('form-cadastro-usuario');
         const messageContainer = document.getElementById('message-container');
         if (formCadastroUsuario) {
@@ -351,50 +310,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 e.preventDefault();
                 const email = document.getElementById('email').value;
                 const senha = document.getElementById('senha').value;
-                
-                // (REMOVIDO) O nível não é mais pego do HTML
-                // const nivel = document.getElementById('nivel').value; 
 
+                // 1. Verifica se o email já existe
                 fetch(`http://localhost:3000/usuarios?email=${email}`)
                 .then(res => res.json())
                 .then(existingUsers => {
                     if (existingUsers.length > 0) {
                         throw new Error('Este email já está cadastrado.');
                     }
-                    // Envia o novo usuário (sem 'nivel', o backend decide)
+                    // 2. Envia o novo usuário (o backend define o nível como 'cliente' ou 'gerente')
                     return fetch('http://localhost:3000/usuarios', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        // (MUDANÇA) Envia só email e senha
                         body: JSON.stringify({ email, senha }) 
                     });
                 })
                 .then(res => res.json())
                 .then(data => {
-                    if (data.error) { // Trata erro vindo do backend (ex: email já existe)
-                        throw new Error(data.error);
-                    }
-                    // *** (NOVO) MENSAGEM DE SUCESSO ***
+                    if (data.error) { throw new Error(data.error); }
+                    
                     messageContainer.textContent = 'Cadastro realizado com sucesso! Você já pode fazer o login.';
                     messageContainer.className = 'success';
-                    messageContainer.style.display = 'block'; // Garante que está visível
+                    messageContainer.style.display = 'block';
                     
                     formCadastroUsuario.reset(); 
                     setTimeout(() => { window.location.href = 'login.html'; }, 2000);
                 })
                 .catch(err => {
-                    // *** (NOVO) MENSAGEM DE ERRO ***
                     messageContainer.textContent = err.message;
                     messageContainer.className = 'error';
-                    messageContainer.style.display = 'block'; // Garante que está visível
+                    messageContainer.style.display = 'block';
                 });
             });
         }
     }
 
-    // --- 2.4: Lógica Específica da Página de CADASTRO DE SERVIÇO (cadastro.html) ---
+    // Lógica da Página de CADASTRO DE SERVIÇO (cadastro.html)
     else if (path.includes("cadastro.html")) {
-        // (Esta lógica permanece 100% igual)
+        // Bloqueia acesso se não for 'gerente'
         if (!currentUser || currentUser.nivel !== 'gerente') {
             const mainContent = document.querySelector('main');
             if (mainContent) {
@@ -406,6 +359,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             return; 
         }
+        
+        // Lógica de submissão do formulário de cadastro de serviço
         const formCadastroServico = document.getElementById('form-cadastro');
         const mensagemElement = document.getElementById('mensagem');
         if (formCadastroServico) {
@@ -417,12 +372,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 const preco = parseFloat(document.getElementById('preco').value);
                 const descricao = document.getElementById('descricao').value.trim();
                 const imagem = document.getElementById('imagem').value.trim();
+                
                 if (!nome || !profissional || !especialidade || !descricao || isNaN(preco) || preco <= 0 || !imagem) {
                     mensagemElement.innerHTML = '<p style="color: red;">Preencha todos os campos corretamente (Preço deve ser maior que zero).</p>';
                     return;
                 }
                 mensagemElement.textContent = ''; 
+                
                 const novoServico = { nome, profissional, especialidade, preco, descricao, imagem };
+                
                 fetch('http://localhost:3000/servicos', { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -442,23 +400,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // --- 2.5: Lógica Específica das Páginas de LISTAGEM (index.html, servicos.html) ---
-    // (ATUALIZADO para incluir a funcionalidade de filtro)
+    // Lógica das Páginas de LISTAGEM (index.html, servicos.html)
     else if (path.includes("index.html") || path.endsWith("/") || path.includes("servicos.html")) {
         
         const isIndex = path.includes("index.html") || path.endsWith("/");
         
-        // (NOVO) LÓGICA DE FILTRO DA BARRA DE PESQUISA (Apenas para servicos.html)
+        // Lógica de Filtro (apenas para servicos.html)
         const filtroInput = document.getElementById('filtro-servicos');
-        if (filtroInput) { // Só vai rodar se o input (que só existe em servicos.html) for encontrado
-            
+        if (filtroInput) { 
             filtroInput.addEventListener('input', () => {
                 const termo = filtroInput.value.toLowerCase().trim();
                 const servicosContainer = document.getElementById('servicos-container');
-                const cards = servicosContainer.querySelectorAll('.col'); // Seleciona as colunas do Bootstrap
+                const cards = servicosContainer.querySelectorAll('.col');
 
                 cards.forEach(card => {
-                    // Busca o texto dentro dos elementos específicos do card
                     const titulo = card.querySelector('h2.card-title').textContent.toLowerCase();
                     const profissional = card.querySelector('.card-profissional').textContent.toLowerCase();
                     const especialidade = card.querySelector('.card-especialidade').textContent.toLowerCase();
@@ -467,11 +422,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                       profissional.includes(termo) || 
                                       especialidade.includes(termo);
                     
-                    // ==================================================
-                    // *** CORREÇÃO APLICADA AQUI (v2) ***
-                    // Usamos classes do Bootstrap (d-none) em vez de style.display
-                    // para preservar o layout do grid.
-                    // ==================================================
                     if (corresponde) {
                         card.classList.remove('d-none'); 
                     } else {
@@ -480,8 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
         }
-        // FIM DA LÓGICA DE FILTRO
-
+        
         // Lógica de Notícias (Apenas para index.html)
         if (isIndex) {
             const noticiasContainer = document.getElementById('noticias-container');
@@ -509,20 +458,19 @@ document.addEventListener("DOMContentLoaded", () => {
                         });
                     })
                     .catch(err => {
-                        console.error("Erro ao buscar notícias:", err.message); 
                         noticiasContainer.innerHTML += `<p style="color: red; text-align: center;">${err.message}</p>`;
                     });
             }
         }
         
-        // Lógica de carregar serviços (Comum ao Index e Serviços)
+        // Lógica para carregar e renderizar serviços
         const servicosSection = document.getElementById("servicos-container");
         if (servicosSection) {
             fetch("http://localhost:3000/servicos")
                 .then(res => res.json())
                 .then(servicos => {
                     servicosSection.innerHTML = servicos.map(servico => {
-                        // (ATUALIZADO) O .card agora é unificado pelo CSS
+                        const precoFormatado = parseFloat(servico.preco).toFixed(2).replace('.', ',');
                         const cardHTML = `
                             <div class="card h-100">
                                 <img src="${servico.imagem}" class="card-img-top" alt="${servico.nome}">
@@ -530,24 +478,25 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <h2 class="card-title">${servico.nome}</h2>
                                     <p class="card-profissional">${servico.profissional}</p>
                                     <p class="card-especialidade">Especialidade: ${servico.especialidade}</p>
-                                    <p>R$ ${parseFloat(servico.preco).toFixed(2).replace('.', ',')}</p>
+                                    <p>R$ ${precoFormatado}</p>
                                     <a href="detalhe.html?id=${servico.id}" class="mt-auto">Ver detalhes</a>
                                 </div>
                             </div>
                         `;
                         if (isIndex) {
+                            // Renderiza como slide para o carrossel na página inicial
                             return `<div class="swiper-slide">${cardHTML}</div>`;
                         }
-                        // (ATUALIZADO) Na página de serviços, o card é envolvido por uma coluna
+                        // Renderiza como coluna para o grid na página de serviços
                         return `<div class="col">${cardHTML}</div>`;
                     }).join("");
 
                     if (!isIndex) {
-                        // (ATUALIZADO) Adiciona as classes do grid Bootstrap ao container
                         servicosSection.classList.add('row', 'row-cols-1', 'row-cols-md-2', 'row-cols-lg-3', 'g-4');
                     }
                     
                     if (isIndex) {
+                        // Inicializa o Swiper para o carrossel
                         new Swiper('.swiper-container', {
                             loop: true,
                             slidesPerView: 1, 
@@ -563,14 +512,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 })
                 .catch(err => {
-                    console.error("Erro ao carregar serviços:", err);
                     servicosSection.innerHTML = "<p>Erro ao carregar serviços.</p>";
                 });
         }
     }
 
-    // --- 2.6: Lógica Específica da Página de DETALHES (detalhe.html) ---
-    // (ATUALIZADO para incluir formulário de agendamento)
+    // Lógica da Página de DETALHES (detalhe.html)
     else if (path.includes("detalhe.html")) {
         
         const detalheElement = document.getElementById("servico-detalhe");
@@ -588,6 +535,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     let actionButtons = '';
                     
                     if (currentUser) {
+                        // Botões para Gerente (Editar/Excluir)
                         if (currentUser.nivel === 'gerente') {
                             actionButtons = `
                                 <div class="action-buttons">
@@ -596,7 +544,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 </div>
                             `;
                         } 
-                        // (NOVO) Formulário de Agendamento para Clientes
+                        // Formulário de Agendamento para Clientes
                         else if (currentUser.nivel === 'cliente') {
                             actionButtons = `
                                 <form id="form-agendamento" class="action-buttons">
@@ -614,7 +562,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             `;
                         }
                     } else {
-                        // (AJUSTADO) Mensagem de login com classes do CSS
+                        // Mensagem para usuário deslogado
                         actionButtons = `
                             <div class="action-buttons" style="border-top: none; padding-top: 0;">
                                 <p style="margin-bottom: 0;">
@@ -624,6 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         `;
                     }
                     
+                    // Renderiza a página de detalhes
                     detalheElement.innerHTML = `
                         <div class="produto-detalhe-card">
                             <img src="${servico.imagem}" alt="${servico.nome}">
@@ -646,7 +595,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         });
                     }
 
-                    // (NOVO) Listener para o formulário de agendamento
+                    // Listener para o formulário de agendamento (apenas para clientes)
                     const formAgendamento = document.getElementById('form-agendamento');
                     if (formAgendamento) {
                         formAgendamento.addEventListener('submit', (e) => {
@@ -680,7 +629,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 })
                 .catch(error => {
-                    console.error("Erro ao buscar detalhes:", error);
+                    // Exibe erro ao carregar serviço
                     detalheElement.innerHTML = `<div class="message-error">
                             <h2>Erro ao Carregar Serviço</h2>
                             <p>${error.message}</p>
@@ -692,9 +641,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- 2.7: Lógica Específica da Página de EDIÇÃO (editar.html) ---
+    // Lógica da Página de EDIÇÃO (editar.html)
     else if (path.includes("editar.html")) {
-        // (Esta lógica permanece 100% igual)
+        // Bloqueia acesso se não for 'gerente'
         if (!currentUser || currentUser.nivel !== 'gerente') {
             const mainContent = document.querySelector('main');
             if (mainContent) {
@@ -706,20 +655,25 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             return; 
         }
+        
+        // Carrega dados do serviço para pré-preencher o formulário
         const formEditar = document.getElementById('form-editar');
         const mensagemElement = document.getElementById('mensagem');
         const urlParams = new URLSearchParams(window.location.search);
         const servicoId = urlParams.get("id"); 
+        
         const nomeInput = document.getElementById('nome');
         const profissionalInput = document.getElementById('profissional');
         const especialidadeInput = document.getElementById('especialidade');
         const precoInput = document.getElementById('preco');
         const descricaoInput = document.getElementById('descricao');
         const imagemInput = document.getElementById('imagem');
+        
         if (!servicoId) {
             document.querySelector('main').innerHTML = `<div class="message-error">ID do serviço não fornecido.</div>`;
             return;
         }
+        
         fetch(`http://localhost:3000/servicos/${servicoId}`)
             .then(res => {
                 if (!res.ok) { throw new Error('Serviço não encontrado.'); }
@@ -736,6 +690,8 @@ document.addEventListener("DOMContentLoaded", () => {
             .catch(error => {
                 mensagemElement.innerHTML = `<p style="color: red;">${error.message}</p>`;
             });
+            
+        // Listener de submissão do formulário de edição (PATCH)
         if (formEditar) {
             formEditar.addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -747,10 +703,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     descricao: descricaoInput.value.trim(),
                     imagem: imagemInput.value.trim()
                 };
+                
                 if (!servicoAtualizado.nome || !servicoAtualizado.profissional || !servicoAtualizado.especialidade || !servicoAtualizado.descricao || isNaN(servicoAtualizado.preco) || servicoAtualizado.preco <= 0 || !servicoAtualizado.imagem) {
                     mensagemElement.innerHTML = '<p style="color: red;">Preencha todos os campos corretamente.</p>';
                     return;
                 }
+                
                 fetch(`http://localhost:3000/servicos/${servicoId}`, { 
                     method: 'PATCH', 
                     headers: { 'Content-Type': 'application/json' },
@@ -773,13 +731,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- 2.8: (NOVO) Lógica Específica da Página de MEUS AGENDAMENTOS ---
-    // (ATUALIZADO com botão de cancelar e status dinâmico)
+    // Lógica da Página de MEUS AGENDAMENTOS (meus-agendamentos.html)
     else if (path.includes("meus-agendamentos.html")) {
         
         const container = document.getElementById('agendamentos-container');
 
-        // 1. Proteger a Rota
+        // Protege a rota: só para 'cliente'
         if (!currentUser || currentUser.nivel !== 'cliente') {
             const mainContent = document.querySelector('main');
             if (mainContent) {
@@ -792,17 +749,16 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // 2. Buscar os agendamentos do usuário logado
+        // Busca os agendamentos do usuário logado
         fetch(`http://localhost:3000/agendamentos/usuario/${currentUser.id}`)
             .then(res => res.json())
             .then(agendamentos => {
                 if (agendamentos.length === 0) {
-                    // (CORRIGIDO) Usa a nova classe .message-info para ser legível
                     container.innerHTML = '<div class="message-info">Você ainda não possui nenhum agendamento.</div>';
                     return;
                 }
 
-                // 3. Renderizar a tabela de agendamentos
+                // Renderiza a tabela de agendamentos
                 container.innerHTML = `
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -817,23 +773,22 @@ document.addEventListener("DOMContentLoaded", () => {
                             </thead>
                             <tbody>
                                 ${agendamentos.map(item => {
-                                    // Formata a data e hora
                                     const data = new Date(item.data_agendamento);
                                     const dataFormatada = data.toLocaleDateString('pt-BR', {
                                         day: '2-digit', month: '2-digit', year: 'numeric',
                                         hour: '2-digit', minute: '2-digit'
                                     });
 
-                                    // (NOVO) Lógica de Status e Botão
                                     let statusBadge = '';
                                     let actionButton = '';
 
+                                    // Define a badge e o botão de ação baseado no status
                                     if (item.status === 'Agendado') {
                                         statusBadge = `<span class="badge" style="background-color: var(--success-green);">${item.status}</span>`;
                                         actionButton = `<button class="btn btn-danger btn-sm btn-cancelar" data-id="${item.agendamento_id}">Cancelar</button>`;
                                     } else if (item.status === 'Cancelado') {
                                         statusBadge = `<span class="badge" style="background-color: var(--danger-red);">${item.status}</span>`;
-                                        actionButton = ``; // Sem botão se já está cancelado
+                                        actionButton = ``;
                                     } else {
                                         statusBadge = `<span class="badge bg-secondary">${item.status}</span>`;
                                     }
@@ -855,12 +810,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
             })
             .catch(err => {
-                console.error("Erro ao buscar agendamentos:", err);
                 container.innerHTML = `<div class="message-error">Erro ao carregar seus agendamentos. Tente novamente.</div>`;
             });
 
-        // (NOVO) Adiciona o event listener para os botões de cancelar
-        // Usamos delegação de evento no container
+        // Adiciona o event listener para os botões de cancelar (delegação de evento)
         container.addEventListener('click', (e) => {
             if (e.target.classList.contains('btn-cancelar')) {
                 const agendamentoId = e.target.dataset.id;

@@ -1,33 +1,22 @@
-/* ========================================================================
-   CSS TOTALMENTE NOVO - HealthServices Marketplace
-   Design: Dark Mode Seletivo (v5.1 - CORRIGIDO)
-   
-   -- CONCEITO (Dark Mode Seletivo) --
-   - Fundos brancos/cinza claro -> Tons escuros.
-   - Textos escuros -> Tons claros.
-   - Cores de destaque (verdes, vermelhos) -> MANTIDAS ou ajustadas para fundo escuro.
-   - Mantém "pop" e "glow" com a paleta de verde existente.
-   ======================================================================== */
-
 /* --- 1. Variáveis de Cor (Dark Mode Seletivo) e Reset --- */
 :root {
-    /* Paleta Original (Mantida para acentos) */
+    /* Paleta Original */
     --primary-green: #007a5e;
     --primary-green-dark: #005a44;
     --danger-red: #d9534f;
     --danger-red-dark: #c9302c;
     --success-green: #5cb85c;
 
-    /* (NOVO) Ajustes para Dark Mode Seletivo */
-    --bg-light: #1a1a1a;          /* Fundo principal do body (anteriormente #f8f9fa) */
-    --bg-white: #2c2c2c;          /* Fundo de containers (anteriormente #ffffff) */
-    --light-green-bg: #004a39;    /* Fundo de destaque verde muito claro (anteriormente #e6f7f3) */
+    /* Ajustes para Dark Mode Seletivo */
+    --bg-light: #1a1a1a;
+    --bg-white: #2c2c2c;
+    --light-green-bg: #004a39;
     
-    --text-dark: #e0e0e0;         /* Cor principal do texto (anteriormente #212529) */
-    --text-secondary: #a0a0a0;    /* Cinza para subtextos (anteriormente #6c757d) */
-    --border-color: #444444;      /* Cor da borda (anteriormente #dee2e6) */
+    --text-dark: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --border-color: #444444;
     
-    /* Variáveis de Estilo (Mantidas) */
+    /* Variáveis de Estilo */
     --border-radius-md: 8px;
     --border-radius-lg: 12px;
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -54,8 +43,8 @@ html {
 body {
     font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     line-height: 1.6;
-    background-color: var(--bg-light); /* (AJUSTADO) */
-    color: var(--text-dark);          /* (AJUSTADO) */
+    background-color: var(--bg-light);
+    color: var(--text-dark);
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -70,50 +59,50 @@ main {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: var(--primary-green); /* (MANTIDO) */
+    color: var(--primary-green);
     font-weight: 600;
     margin-bottom: 0.75rem;
 }
 
-/* (AJUSTADO) A regra P base não deve afetar o .card p (preço) */
+/* Regra para Padrão de Parágrafos */
 body > main p, 
 .intro-text p, 
 .modal-confirm p, 
 .produto-detalhe-card p {
     margin-bottom: 1rem;
-    color: var(--text-secondary); /* (AJUSTADO) */
+    color: var(--text-secondary);
 }
 
 a {
-    color: var(--primary-green); /* (MANTIDO) */
+    color: var(--primary-green);
     text-decoration: none;
     transition: var(--transition-std);
 }
 a:hover {
-    color: var(--primary-green-dark); /* (MANTIDO) */
+    color: var(--primary-green-dark);
     text-decoration: underline;
 }
 
 /* --- 2. Cabeçalho (Navbar) --- */
 .navbar {
-    background-color: var(--bg-white) !important; /* (AJUSTADO) */
-    border-bottom: 1px solid var(--border-color); /* (AJUSTADO) */
+    background-color: var(--bg-white) !important;
+    border-bottom: 1px solid var(--border-color);
     box-shadow: var(--shadow-md);
     padding: 0.75rem 2rem;
 }
 
 .navbar .navbar-brand {
-    color: var(--primary-green); /* (MANTIDO) */
+    color: var(--primary-green);
     font-size: 1.8rem;
     font-weight: 700;
     transition: var(--transition-fast);
 }
 .navbar .navbar-brand:hover {
-    color: var(--primary-green-dark); /* (MANTIDO) */
+    color: var(--primary-green-dark);
 }
 
 .navbar .nav-link {
-    color: var(--text-dark); /* (AJUSTADO) */
+    color: var(--text-dark);
     font-size: 1rem;
     font-weight: 500;
     padding: 8px 16px;
@@ -123,25 +112,25 @@ a:hover {
     transition: var(--transition-std);
 }
 
-/* Estilo "Pill" para hover e ativo (AJUSTADO O BACKGROUND HOVER) */
+/* Estilo para links ativos/hover na navbar */
 .navbar .nav-link:hover {
-    background-color: rgba(0, 122, 94, 0.2); /* Mais visível no dark */
-    color: var(--primary-green); /* (MANTIDO) */
+    background-color: rgba(0, 122, 94, 0.2);
+    color: var(--primary-green);
     border-bottom-color: transparent;
     text-decoration: none;
 }
 .navbar .nav-link.active {
-    background-color: var(--primary-green); /* (MANTIDO) */
+    background-color: var(--primary-green);
     color: var(--bg-white);
     border-bottom-color: transparent;
     font-weight: 600;
 }
 .navbar .nav-link.active:hover {
-    background-color: var(--primary-green-dark); /* (MANTIDO) */
+    background-color: var(--primary-green-dark);
     color: var(--bg-white);
 }
 
-/* Botões da Navbar (mantidos) */
+/* Botões de Ação na Navbar */
 .navbar .btn-primary {
     background-color: var(--primary-green);
     border-color: var(--primary-green);
@@ -174,16 +163,16 @@ a:hover {
 
 .navbar .user-info {
     font-size: 0.95rem;
-    color: var(--text-secondary); /* (AJUSTADO) */
+    color: var(--text-secondary);
 }
 
-/* Ícone do Toggler (AJUSTADO PARA SER CLARO) */
+/* Toggler para Mobile */
 .navbar .navbar-toggler-icon {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.7)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 .navbar .navbar-toggler {
-    border-color: var(--border-color); /* (AJUSTADO) */
+    border-color: var(--border-color);
 }
 .navbar .navbar-toggler:focus {
     box-shadow: 0 0 0 0.25rem rgba(0, 122, 94, 0.15);
@@ -191,7 +180,7 @@ a:hover {
 
 /* --- 3. Botões Globais --- */
 
-/* Botão Primário (Verde com Gradiente - Mantido) */
+/* Botão Primário (Verde) */
 .btn-ver-produtos,
 .btn-submit,
 .btn-editar,
@@ -226,7 +215,7 @@ a:hover {
     box-shadow: 0 10px 20px rgba(0, 122, 94, 0.25);
 }
 
-/* Botão Destrutivo (Vermelho - Mantido) */
+/* Botão Destrutivo (Vermelho) */
 .btn-excluir {
     display: inline-block;
     background-color: var(--danger-red);
@@ -250,40 +239,37 @@ a:hover {
     box-shadow: 0 10px 20px rgba(217, 83, 79, 0.25);
 }
 
-/* Botão Secundário (AJUSTADO PARA SER UM "GHOST BUTTON" CLARO) */
+/* Botão Secundário (Fantasma) */
 .btn-voltar {
     display: inline-block;
     background-color: transparent;
-    color: var(--text-secondary); /* Texto cinza claro */
-    text-decoration: none;
+    color: var(--text-secondary);
     padding: 11px 24px; 
     text-align: center;
     font-weight: 500;
-    border: 1px solid var(--border-color); /* Borda cinza escuro */
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
     cursor: pointer;
     font-size: 1rem;
     transition: var(--transition-std);
 }
 .btn-voltar:hover {
-    background-color: var(--border-color); /* Fundo da própria borda no hover */
-    color: var(--text-dark); /* Texto mais claro no hover */
+    background-color: var(--border-color);
+    color: var(--text-dark);
     text-decoration: none;
     transform: translateY(-3px) scale(1.03);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 
-/* --- 4. Cards de Serviço (Página Index e Serviços) --- */
+/* --- 4. Cards de Serviço (Index e Serviços) --- */
 
-/* (NOVO) REGRA BASE DO CARD (Aplicada a TODOS os cards) */
-/* Sem width ou margin para não conflitar com Bootstrap */
 .card {
-    background-color: var(--bg-white); /* (AJUSTADO) */
+    background-color: var(--bg-white);
     border: none;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
-    color: var(--text-dark); /* (AJUSTADO) */
+    color: var(--text-dark);
     display: flex;
     flex-direction: column;
     transition: var(--transition-slow);
@@ -296,38 +282,35 @@ a:hover {
     box-shadow: var(--shadow-lg);
 }
 
-/* (NOVO) Regra para Cards no Grid do Bootstrap (servicos.html) */
-/* O card deve ter 100% de altura/largura (da coluna) e sem margem (o grid 'g-4' cuida do espaço) */
+/* Cards no Grid (servicos.html) */
 .col .card {
     width: 100%;
     height: 100%;
     margin: 0;
 }
 
-/* (NOVO) Regra para Cards no Carrossel (index.html) */
-/* O card precisa de width/margin fixos para o swiper funcionar */
+/* Cards no Carrossel (index.html) */
 .swiper-slide .card {
     width: 280px;
-    margin: 1rem; /* Esta margem é para o swiper */
-    height: auto; /* O swiper alinha a altura */
+    margin: 1rem;
+    height: auto;
 }
 
-
-/* Conteúdo interno do Card (Regras unificadas) */
+/* Conteúdo interno do Card */
 .card img {
     width: 100%;
     height: 200px;
     object-fit: cover;
     margin-bottom: 0;
-    border-bottom: 1px solid var(--border-color); /* (AJUSTADO) */
+    border-bottom: 1px solid var(--border-color);
 }
 
 .card h2 {
-    margin: 15px 20px 10px 20px; /* Padding via margin */
-    padding: 0; /* Reset do padding */
+    margin: 15px 20px 10px 20px;
+    padding: 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--primary-green); /* (MANTIDO) */
+    color: var(--primary-green);
     min-height: 2.5em;
     line-height: 1.25em;
 }
@@ -335,23 +318,23 @@ a:hover {
 .card .card-profissional {
     font-size: 1rem;
     font-weight: 500;
-    color: var(--text-dark); /* (AJUSTADO) */
+    color: var(--text-dark);
     margin: 0 0 5px 0;
     padding: 0 20px;
 }
 .card .card-especialidade {
     font-size: 0.9rem;
     font-weight: 400;
-    color: var(--text-secondary); /* (AJUSTADO) */
+    color: var(--text-secondary);
     margin: 0 0 10px 0;
     padding: 0 20px;
 }
 
-/* Preço (agora é a única regra .card p) */
+/* Preço do Card */
 .card p {
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--primary-green); /* (MANTIDO) */
+    color: var(--primary-green);
     margin: 0 0 15px 0;
     padding: 0 20px;
 }
@@ -378,9 +361,9 @@ a:hover {
 .intro-text {
     flex: 2;
     min-width: 300px;
-    color: var(--text-dark); /* (AJUSTADO) */
+    color: var(--text-dark);
     padding: 30px;
-    background-color: var(--bg-white); /* (AJUSTADO) */
+    background-color: var(--bg-white);
     border-radius: var(--border-radius-lg);
     border: none;
     box-shadow: var(--shadow-md);
@@ -390,7 +373,6 @@ a:hover {
     margin-bottom: 15px;
     font-size: 1.8rem;
 }
-/* .intro-text p (já coberto pela regra 'body > main p') */
 
 .btn-ver-produtos {
     margin-top: 15px;
@@ -399,31 +381,31 @@ a:hover {
 .produtos-destaque-titulo {
     font-size: 1.8rem;
     font-weight: 600;
-    color: var(--primary-green); /* (MANTIDO) */
+    color: var(--primary-green);
     margin-top: 40px;
     margin-bottom: 10px;
     text-align: center;
 }
 
-/* Bloco de Notícias (AJUSTADO) */
+/* Bloco de Notícias */
 #noticias-container {
     flex: 1;
     min-width: 300px;
     padding: 25px;
-    background-color: var(--light-green-bg); /* (AJUSTADO) */
+    background-color: var(--light-green-bg);
     border-radius: var(--border-radius-lg);
     text-align: left;
-    color: var(--text-dark); /* (AJUSTADO) */
+    color: var(--text-dark);
 }
 #noticias-container h2 {
     margin-top: 0;
     margin-bottom: 20px;
     text-align: center;
-    color: var(--primary-green); /* (MANTIDO) */
+    color: var(--primary-green);
 }
 .noticia-card {
     display: block;
-    background-color: var(--bg-light); /* (AJUSTADO) */
+    background-color: var(--bg-light);
     padding: 15px;
     border-radius: var(--border-radius-md);
     box-shadow: var(--shadow-sm);
@@ -440,11 +422,11 @@ a:hover {
     margin-top: 0;
     margin-bottom: 8px;
     font-size: 1.1rem;
-    color: var(--primary-green); /* (MANTIDO) */
+    color: var(--primary-green);
 }
 .noticia-card span {
     font-size: 0.85rem;
-    color: var(--text-secondary); /* (AJUSTADO) */
+    color: var(--text-secondary);
 }
 
 /* --- 6. Carrossel (Swiper.js) --- */
@@ -463,11 +445,10 @@ a:hover {
     height: auto; 
     padding-bottom: 10px;
 }
-/* .swiper-slide .card (Regra já definida na Seção 4) */
 
 .swiper-button-prev,
 .swiper-button-next {
-    color: var(--primary-green); /* (MANTIDO) */
+    color: var(--primary-green);
     --swiper-navigation-size: 30px; 
     font-weight: 900;
 }
@@ -476,11 +457,11 @@ a:hover {
     bottom: 10px !important; 
 }
 .swiper-pagination-bullet {
-    background-color: #777; /* (AJUSTADO) */
+    background-color: #777;
     opacity: 0.7;
 }
 .swiper-pagination-bullet-active {
-    background-color: var(--primary-green); /* (MANTIDO) */
+    background-color: var(--primary-green);
     opacity: 1;
 }
 
@@ -509,8 +490,8 @@ a:hover {
     }
 }
 .filtro-box {
-    background: var(--bg-white); /* (AJUSTADO) */
-    color: var(--text-dark); /* (AJUSTADO) */
+    background: var(--bg-white);
+    color: var(--text-dark);
     padding: 25px;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
@@ -534,7 +515,7 @@ a:hover {
     margin: 40px auto; 
     padding: 30px;
     border-radius: var(--border-radius-lg);
-    background-color: var(--bg-white); /* (AJUSTADO) */
+    background-color: var(--bg-white);
     border: none;
     box-shadow: var(--shadow-lg);
     gap: 15px; 
@@ -549,7 +530,7 @@ a:hover {
     width: 100%;
     text-align: left;
     font-weight: 600;
-    color: var(--text-dark); /* (AJUSTADO) */
+    color: var(--text-dark);
     margin-bottom: -5px;
 }
 
@@ -557,26 +538,26 @@ a:hover {
 .form-container input[type="number"], 
 .form-container input[type="email"], 
 .form-container input[type="password"], 
-.form-container input[type="datetime-local"], /* (NOVO) Adicionado para agendamento */
+.form-container input[type="datetime-local"],
 .form-container textarea,
 .form-container select,
 .form-group input,
 .form-group select,
-#form-agendamento input[type="datetime-local"] { /* (NOVO) Adicionado para agendamento */
+#form-agendamento input[type="datetime-local"] {
     width: 100%;
     padding: 12px;
-    border: 1px solid var(--border-color); /* (AJUSTADO) */
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
     box-sizing: border-box;
     font-family: inherit;
     font-size: 1rem;
-    background-color: var(--bg-light); /* (AJUSTADO) */
-    color: var(--text-dark); /* (AJUSTADO) */
+    background-color: var(--bg-light);
+    color: var(--text-dark);
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
     transition: var(--transition-fast);
 }
 
-/* (NOVO) Correção de cor do texto do date picker */
+/* Correção de cor do texto do date picker em Dark Mode */
 .form-container input[type="datetime-local"],
 #form-agendamento input[type="datetime-local"] {
     color-scheme: dark;
@@ -587,15 +568,15 @@ a:hover {
 .form-container input[type="number"]:focus, 
 .form-container input[type="email"]:focus, 
 .form-container input[type="password"]:focus, 
-.form-container input[type="datetime-local"]:focus, /* (NOVO) Adicionado para agendamento */
+.form-container input[type="datetime-local"]:focus,
 .form-container textarea:focus,
 .form-container select:focus,
 .form-group input:focus,
 .form-group select:focus,
-#form-agendamento input[type="datetime-local"]:focus { /* (NOVO) Adicionado para agendamento */
+#form-agendamento input[type="datetime-local"]:focus {
     outline: none;
     border-color: var(--primary-green);
-    background-color: var(--bg-white); /* (AJUSTADO) */
+    background-color: var(--bg-white);
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.1), 0 0 0 4px rgba(0, 122, 94, 0.15);
 }
 
@@ -629,13 +610,13 @@ main.container .form-container {
     text-align: center;
     margin-top: 25px;
     font-size: 0.95rem;
-    color: var(--text-secondary); /* (AJUSTADO) */
+    color: var(--text-secondary);
 }
 .form-switch a {
     font-weight: 500;
 }
 
-/* Mensagens de Feedback (Login/Cadastro) (AJUSTADO) */
+/* Mensagens de Feedback (Login/Cadastro) */
 #message-container {
     text-align: center;
     margin-top: 15px;
@@ -663,12 +644,12 @@ main.container .form-container {
     padding: 30px 40px;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-lg);
-    color: var(--text-dark); /* (AJUSTADO) */
+    color: var(--text-dark);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    background-color: var(--bg-white); /* (AJUSTADO) */
+    background-color: var(--bg-white);
     margin: 40px auto;
     border: none;
 }
@@ -682,16 +663,15 @@ main.container .form-container {
     object-fit: cover;
     border-radius: var(--border-radius-lg);
     margin-bottom: 25px;
-    border: 1px solid var(--border-color); /* (AJUSTADO) */
+    border: 1px solid var(--border-color);
 }
 .produto-detalhe-card h2 {
     font-size: 2.2rem;
     margin-bottom: 20px;
 }
-/* .produto-detalhe-card p (já coberto pela regra 'body > main p') */
 
 .produto-detalhe-card p strong {
-    color: var(--primary-green); /* (MANTIDO) */
+    color: var(--primary-green);
     font-weight: 600;
     margin-right: 8px;
 }
@@ -703,14 +683,14 @@ main.container .form-container {
     margin-bottom: 25px;
     justify-content: center;
     width: 100%;
-    border-top: 1px solid var(--border-color); /* (AJUSTADO) */
+    border-top: 1px solid var(--border-color);
     padding-top: 25px;
 }
 
-/* (NOVO) Estilo do formulário de agendamento em detalhe.html */
+/* Estilo do formulário de agendamento em detalhe.html */
 #form-agendamento {
     border-top: 1px solid var(--border-color);
-    flex-wrap: wrap; /* Permite quebra de linha em telas pequenas */
+    flex-wrap: wrap;
 }
 #form-agendamento label {
     font-size: 0.9rem;
@@ -737,7 +717,7 @@ main.container .form-container {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* (AJUSTADO) */
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -752,7 +732,7 @@ main.container .form-container {
     visibility: visible;
 }
 .modal-confirm {
-    background-color: var(--bg-white); /* (AJUSTADO) */
+    background-color: var(--bg-white);
     padding: 25px 30px;
     border-radius: var(--border-radius-lg);
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
@@ -761,7 +741,7 @@ main.container .form-container {
     text-align: left;
     transform: scale(0.95);
     transition: transform 0.3s ease-out;
-    color: var(--text-dark); /* (AJUSTADO) */
+    color: var(--text-dark);
 }
 .modal-overlay.visible .modal-confirm {
     transform: scale(1);
@@ -770,9 +750,8 @@ main.container .form-container {
     margin-top: 0;
     margin-bottom: 10px;
     font-size: 1.3rem;
-    color: var(--text-dark); /* (AJUSTADO) */
+    color: var(--text-dark);
 }
-/* .modal-confirm p (já coberto pela regra 'body > main p') */
 
 .modal-confirm-actions {
     display: flex;
@@ -790,8 +769,8 @@ main.container .form-container {
     font-family: inherit;
 }
 .modal-btn-cancel {
-    background-color: var(--border-color); /* (AJUSTADO) */
-    color: var(--text-dark); /* (AJUSTADO) */
+    background-color: var(--border-color);
+    color: var(--text-dark);
     border: none;
 }
 .modal-btn-cancel:hover {
@@ -811,7 +790,7 @@ main.container .form-container {
 /* --- 11. Mensagens de Feedback (Sucesso/Erro) --- */
 .message-success,
 .message-error,
-.message-info { /* (NOVO) Adicionado .message-info */
+.message-info {
     text-align: center;
     margin: 50px auto;
     padding: 30px;
@@ -822,19 +801,19 @@ main.container .form-container {
 .message-success {
     background-color: var(--success-green);
     border: 1px solid var(--primary-green-dark);
-    color: #FFFFFF; /* (CORRIGIDO) Texto branco */
+    color: #FFFFFF;
 }
 .message-error {
     background-color: var(--danger-red);
     border: 1px solid var(--danger-red-dark);
-    color: #FFFFFF; /* (CORRIGIDO) Texto branco */
+    color: #FFFFFF;
 }
 
-/* (NOVO) Mensagem informativa neutra */
+/* Mensagem informativa neutra */
 .message-info {
-    background-color: var(--bg-white); /* Fundo de container */
+    background-color: var(--bg-white);
     border: 1px solid var(--border-color);
-    color: var(--text-dark); /* Texto claro */
+    color: var(--text-dark);
 }
 
 .message-success h2,
@@ -850,7 +829,6 @@ main.container .form-container {
 }
 
 /* --- 12. Rodapé --- */
-/* (MANTIDO) Gradiente funciona bem */
 footer, .footer {
   background: linear-gradient(135deg, var(--primary-green-dark) 0%, var(--primary-green) 100%);
   color: rgba(255, 255, 255, 0.9);
@@ -884,12 +862,9 @@ footer p, .footer p {
         padding: 0 15px;
         margin-top: 20px;
     }
-    /* (REMOVIDO) Regra de card media query, agora o grid cuida disso */
 }
 
 @media (max-width: 500px) {
-    /* (REMOVIDO) Regra de card media query */
-    
     .action-buttons {
         flex-direction: column;
         align-items: stretch;
@@ -901,7 +876,7 @@ footer p, .footer p {
 
 /* --- 14. Estilos do Painel de Agendamentos --- */
 .table-responsive {
-    background-color: var(--bg-white); /* (AJUSTADO) */
+    background-color: var(--bg-white);
     border: none;
     border-radius: var(--border-radius-lg);
     overflow: hidden;
@@ -910,22 +885,22 @@ footer p, .footer p {
 
 .table {
     margin-bottom: 0;
-    color: var(--text-dark); /* (AJUSTADO) */
+    color: var(--text-dark);
 }
 
 .table thead.table-dark {
-    background-color: var(--primary-green); /* (MANTIDO) */
-    border-color: var(--primary-green-dark); /* (MANTIDO) */
-    color: var(--bg-white); /* (AJUSTADO) */
+    background-color: var(--primary-green);
+    border-color: var(--primary-green-dark);
+    color: var(--bg-white);
 }
 
-/* Efeito de hover para linhas da tabela (AJUSTADO) */
+/* Efeito de hover para linhas da tabela */
 .table tbody tr {
     transition: var(--transition-fast);
-    border-bottom: 1px solid var(--border-color); /* (AJUSTADO) */
+    border-bottom: 1px solid var(--border-color);
 }
 .table tbody tr:hover {
-    background-color: var(--bg-light); /* (AJUSTADO) */
+    background-color: var(--bg-light);
 }
 
 .table .badge {
@@ -933,6 +908,3 @@ footer p, .footer p {
     padding: 0.5em 0.75em;
     border-radius: var(--border-radius-md);
 }
-
-/* Estilo para o formulário na página de detalhes */
-/* (Movido para Seção 9 para melhor organização) */
